@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Signal Test - Browser</title>
+</head>
+<body>
+	<div class="container">
+		<div id="log-dump"></div>
+		<div class="send-container">
+			<h1>Send</h1>
+			<div class="registration-id">
+				<h2>Registration ID</h2>
+				<label>
+					<span>Registration Id</span>
+					<input type="text" name="registration-id" id="registration-id">
+				</label>
+			</div>
+			<div class="identity-key">
+				<h2>Identity Key Packet</h2>
+				<label>
+					<span>Identity Key</span>
+					<input type="text" name="identity-key" id="identity-key">
+				</label>
+			</div>
+			<div class="signed-prekey">
+				<h2>Signed Prekey Packet</h2>
+				<label>
+					<span>Key Id</span>
+					<input type="text" name="signed-prekey-id" id="signed-prekey-id">
+				</label>
+				<label>
+					<span>Public Key</span>
+					<input type="text" name="signed-prekey-key" id="signed-prekey-key">
+				</label>
+				<label>
+					<span>Signature</span>
+					<input type="text" name="signed-prekey-signature" id="signed-prekey-signature">
+				</label>
+			</div>
+			<div class="prekey">
+				<h2>Prekey Packet</h2>
+				<label>
+					<span>Key Id</span>
+					<input type="text" name="prekey-id" id="prekey-id">
+				</label>
+				<label>
+					<span>Public Key</span>
+					<input type="text" name="prekey-key" id="prekey-key">
+				</label>
+			</div>
+			<button style="margin-top: 20px;" id="send-keys">Send</button>
+		</div>
+		<hr>
+		<hr>
+		<div class="receive-container">
+			<div class="request-keys-form">
+				<label>
+					<span>Registration Id</span>
+					<input type="text" name="request-keys-registration-id" id="request-keys-registration-id">
+				</label>
+				<label>
+					<span>Device Id</span>
+					<input type="text" name="request-keys-device-id" id="request-keys-device-id">
+				</label>
+				<label>
+					<span>Unique Id</span>
+					<input type="text" name="request-keys-unique-id" id="request-keys-unique-id">
+				</label>
+				<button style="margin-top: 20px;" id="request-keys">Request Keys</button>	
+			</div>
+			<hr>
+			<h1>Receive</h1>
+			<div class="registration-id">
+				<h2>Registration ID</h2>
+				<label>
+					<span>Registration Id</span>
+					<input type="text" name="receive-registration-id" id="receive-registration-id">
+				</label>
+			</div>
+			<div class="identity-key">
+				<h2>Identity Key Packet</h2>
+				<label>
+					<span>Identity Key</span>
+					<input type="text" name="receive-identity-key" id="receive-identity-key">
+				</label>
+			</div>
+			<div class="signed-prekey">
+				<h2>Signed Prekey Packet</h2>
+				<label>
+					<span>Key Id</span>
+					<input type="text" name="receive-signed-prekey-id" id="receive-signed-prekey-id">
+				</label>
+				<label>
+					<span>Public Key</span>
+					<input type="text" name="receive-signed-prekey-key" id="receive-signed-prekey-key">
+				</label>
+				<label>
+					<span>Signature</span>
+					<input type="text" name="receive-signed-prekey-signature" id="receive-signed-prekey-signature">
+				</label>
+			</div>
+			<div class="prekey">
+				<h2>Prekey Packet</h2>
+				<label>
+					<span>Key Id</span>
+					<input type="text" name="receive-prekey-id" id="receive-prekey-id">
+				</label>
+				<label>
+					<span>Public Key</span>
+					<input type="text" name="receive-prekey-key" id="receive-prekey-key">
+				</label>
+			</div>
+			<button style="margin-top: 20px;" id="parse-keys">Process</button>
+		</div>
+	</div>
+</body>
+<footer>
+	<script type="text/javascript" src="libsignal-protocol-javascript-master/dist/libsignal-protocol.js"></script>
+	<script type="text/javascript" src="store.js"></script>
+	<script type="text/javascript" src="util.js"></script>
+	<script type="text/javascript" src="index.js"></script>
+</footer>
+</html>
