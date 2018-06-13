@@ -141,11 +141,11 @@ function waitForRequestKeys() {
 function processReceivedKeys(resJson) {
     document.querySelector('#receive-registration-id').value = resJson.registrationId;
     document.querySelector('#receive-identity-key').value = resJson.identityKey;
-    document.querySelector('#receive-signed-prekey-id').value = resJson.signedPreKey.keyId;
-    document.querySelector('#receive-signed-prekey-key').value = resJson.signedPreKey.publicKey;
+    document.querySelector('#receive-signed-prekey-id').value = resJson.signedPreKey.id;
+    document.querySelector('#receive-signed-prekey-key').value = resJson.signedPreKey.key;
     document.querySelector('#receive-signed-prekey-signature').value = resJson.signedPreKey.signature;
-    document.querySelector('#receive-prekey-id').value = resJson.preKey.keyId;
-    document.querySelector('#receive-prekey-key').value = resJson.preKey.publicKey;
+    document.querySelector('#receive-prekey-id').value = resJson.preKey.id;
+    document.querySelector('#receive-prekey-key').value = resJson.preKey.key;
 }
 
 function waitForKeys() {
