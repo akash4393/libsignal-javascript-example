@@ -151,7 +151,6 @@ function waitForKeys() {
     document.querySelector('#parse-keys').addEventListener('click', event => {
         let processPreKeyObject = {
             registrationId: document.querySelector('#receive-registration-id').value,
-            deviceId: document.querySelector('#receive-device-id').value,
             identityKey: window.base64ToArrBuff(document.querySelector('#receive-identity-key').value),
             signedPreKey: {
                 keyId: document.querySelector('#receive-signed-prekey-id').value,
@@ -163,12 +162,13 @@ function waitForKeys() {
                 publicKey: window.base64ToArrBuff(document.querySelector('#receive-prekey-key').value)
             }
         };
-        setupSession(processPreKeyObject);
+        let incomingDeviceId = document.querySelector('#receive-device-id').value;
+        setupSession(processPreKeyObject, incomingDeviceId);
     })
 }
 
-function setupSession(processPreKeyObject) {
-    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.recipientId, processPreKeyObject.deviceId);
+function setupSession(processPreKeyObject, incomingDeviceId) {
+    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.recipientId, incomingDeviceId);
     console.log(recipientAddress);
     let sessionBuilder = new ls.SessionBuilder(store, recipientAddress);
     sessionBuilder.processPreKey(processPreKeyObject)
