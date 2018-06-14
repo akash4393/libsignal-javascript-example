@@ -168,8 +168,7 @@ function waitForKeys() {
 }
 
 function setupSession(processPreKeyObject, incomingDeviceId) {
-    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.recipientId, incomingDeviceId);
-    console.log(recipientAddress);
+    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.registrationId, incomingDeviceId);
     let sessionBuilder = new ls.SessionBuilder(store, recipientAddress);
     sessionBuilder.processPreKey(processPreKeyObject)
         .then(resp => {
