@@ -115,12 +115,29 @@
 			</div>
 			<button style="margin-top: 20px;" id="parse-keys">Process</button>
 		</div>
+		<hr>
+		<hr>
+		<div class="send-message-container" style="display: inline-block;">
+			<h1>Messaging</h1>
+			<label>
+				<span>Send Message</span>
+				<input type="text" name="send-plaintext" id="send-plaintext">
+			</label>
+			<button style="margin-top: 20px;" id="send-message">Send</button>
+		</div>
+		<div class="receive-message-container" style="display: inline-block;">
+			<label>
+				<span>Receive Message</span>
+				<input type="text" name="receive-plaintext" id="receive-plaintext">
+			</label>
+			<button style="margin-top: 20px;" id="receive-message">Receive</button>
+		</div>
 	</div>
 </body>
 <footer>
 	<script type="text/javascript" src="libsignal-protocol-javascript-master/dist/libsignal-protocol.js"></script>
-	<script type="text/javascript" src="store.js"></script>
 	<script type="text/javascript" src="util.js"></script>
+	<script type="text/javascript" src="store.js"></script>
 	<script type="text/javascript" src="index.js"></script>
 </footer>
 </html>

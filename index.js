@@ -150,15 +150,15 @@ function processReceivedKeys(resJson) {
 function waitForKeys() {
     document.querySelector('#parse-keys').addEventListener('click', event => {
         let processPreKeyObject = {
-            registrationId: document.querySelector('#receive-registration-id').value,
+            registrationId: parseInt(document.querySelector('#receive-registration-id').value),
             identityKey: window.base64ToArrBuff(document.querySelector('#receive-identity-key').value),
             signedPreKey: {
-                keyId: document.querySelector('#receive-signed-prekey-id').value,
+                keyId: parseInt(document.querySelector('#receive-signed-prekey-id').value),
                 publicKey: window.base64ToArrBuff(document.querySelector('#receive-signed-prekey-key').value),
                 signature: window.base64ToArrBuff(document.querySelector('#receive-signed-prekey-signature').value)
             },
             preKey: {
-                keyId: document.querySelector('#receive-prekey-id').value,
+                keyId: parseInt(document.querySelector('#receive-prekey-id').value),
                 publicKey: window.base64ToArrBuff(document.querySelector('#receive-prekey-key').value)
             }
         };
@@ -172,8 +172,61 @@ function setupSession(processPreKeyObject, incomingDeviceId) {
     let sessionBuilder = new ls.SessionBuilder(store, recipientAddress);
     sessionBuilder.processPreKey(processPreKeyObject)
         .then(resp => {
+            console.log(resp);
             console.log('Success! Session Established!');
+            waitForMessageSend(recipientAddress, processPreKeyObject.registrationId, incomingDeviceId);
+            //waitForMessageReceive(recipientAddress);
         }).catch(err => {
             console.log('Failed!');
         });
+}
+
+function waitForMessageSend(address, regId, devId) {
+    document.querySelector('#send-message').addEventListener('click', event => {
+        console.log('in waitForMessageSend click');
+        let message = new TextEncoder("utf-8").encode('test');//document.querySelector('#send-plaintext').value;
+        console.log(message);
+        if(message) {
+            let sessionCipher = new ls.SessionCipher(store, address);
+            sessionCipher.encrypt(message).then(ciphertext => {
+                console.log(ciphertext);
+                sendMessageToServer(ciphertext, regId, devId);
+            });
+        } else {
+            console.log('empty message body');
+        }
+    });
+}
+
+function sendMessageToServer(ciphertext, regId, devId) {
+    let requestObject = {
+        ciphertext: ciphertext,
+        registrationId: regId,
+        deviceId: devId
+    };
+    let url = 'http://localhost:3000/send/message';
+    sendRequest(url, requestObject).then(res => {
+        console.log('Message succesfully sent to server');
+        console.log(res);
+    });
+}
+
+function waitForMessageReceive(address, regId, devId) {
+    document.querySelector('#receive-message').addEventListener('click', event => {
+        let requestObject = {
+            registrationId: regId,
+            deviceId: devId
+        };
+        let url = 'http://localhost:3000/get/message';
+        sendRequest(url, requestObject).then(res => {
+            processIncomingMessage(res, address, regId, devId);
+        })
+    });
+}
+
+function processIncomingMessage(incomingMessage, address, regId, devId) {
+    let sessionCipher = new ls.SessionCipher(store, address);
+    sessionCipher.decryptWhisperMessage(incomingMessage).then(plaintext => {
+        console.log(plaintext);
+    });
 }
