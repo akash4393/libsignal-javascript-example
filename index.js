@@ -6,9 +6,9 @@ const store = new window.SignalProtocolStore();
 
 const KeyHelper = ls.KeyHelper;
 const numberOfPreKeys = 1;
-const recipientId = 28723;
 const deviceId = 28724;
-const recipientAddress = new ls.SignalProtocolAddress(recipientId, deviceId);
+
+
 
 let idKeyPair = {};
 let registrationId;
@@ -86,7 +86,6 @@ function sendKeysToServer() {
     let requestObject = {
         type: 'init',
         deviceId: deviceId,
-        uniqueId: 12345,
         registrationId: registrationId,
         identityKey: window.arrBuffToBase64(idKeyPair.pubKey),
         signedPreKey: {
@@ -128,8 +127,7 @@ function waitForRequestKeys() {
     document.querySelector('#request-keys').addEventListener('click', event => {
         let requestObject = {
             registrationId: document.querySelector('#request-keys-registration-id').value,
-            deviceId: document.querySelector('#request-keys-device-id').value,
-            uniqueId: document.querySelector('#request-keys-unique-id').value
+            deviceId: document.querySelector('#request-keys-device-id').value
         };
         let url = 'http://localhost:3000/get';
         sendRequest(url, requestObject).then(obj => {
@@ -140,6 +138,7 @@ function waitForRequestKeys() {
 
 function processReceivedKeys(resJson) {
     document.querySelector('#receive-registration-id').value = resJson.registrationId;
+    document.querySelector('#receive-device-id').value = resJson.deviceId;
     document.querySelector('#receive-identity-key').value = resJson.identityKey;
     document.querySelector('#receive-signed-prekey-id').value = resJson.signedPreKey.id;
     document.querySelector('#receive-signed-prekey-key').value = resJson.signedPreKey.key;
@@ -152,6 +151,7 @@ function waitForKeys() {
     document.querySelector('#parse-keys').addEventListener('click', event => {
         let processPreKeyObject = {
             registrationId: document.querySelector('#receive-registration-id').value,
+            deviceId: document.querySelector('#receive-device-id').value,
             identityKey: window.base64ToArrBuff(document.querySelector('#receive-identity-key').value),
             signedPreKey: {
                 keyId: document.querySelector('#receive-signed-prekey-id').value,
@@ -168,6 +168,7 @@ function waitForKeys() {
 }
 
 function setupSession(processPreKeyObject) {
+    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.recipientId, processPreKeyObject.deviceId);
     let sessionBuilder = new ls.SessionBuilder(store, recipientAddress);
     sessionBuilder.processPreKey(processPreKeyObject)
         .then(resp => {
