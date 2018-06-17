@@ -18,6 +18,23 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer;
 }
 
+function sendRequest(url, reqObj) {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqObj)
+    })
+    .then(res => {
+        return res.json();
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
 // Util import from src/helpers.js
 var util = (function() {
     'use strict';
@@ -68,3 +85,4 @@ var util = (function() {
 window.util = util;
 window.arrBuffToBase64 = arrayBufferToBase64;
 window.base64ToArrBuff = base64ToArrayBuffer;
+window.sendRequest = sendRequest;

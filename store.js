@@ -167,3 +167,4 @@ var util = (function() {
 })();
 
 window.SignalProtocolStore = SignalProtocolStore;
+window.lsUtil = util;
