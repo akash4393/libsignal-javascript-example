@@ -85,6 +85,7 @@ function generatePreKeys() {
                 keyPair: preKey.keyPair
             };
             preKeyObjects.push(preKeyObject);
+            store.storePreKey(preKeyObject.keyId, preKeyObject.keyPair);
         });
         //console.log('preKeyObjects');
         //console.log(preKeyObjects);
@@ -99,6 +100,7 @@ function generateSignedPreKey() {
             keyPair: signedPreKey.keyPair,
             signature: signedPreKey.signature
         }
+        store.storeSignedPreKey(signedPreKey.keyId, signedPreKeyObject.keyPair);
         //console.log('signedPreKeyObject');
         //console.log(signedPreKeyObject);
         registerWithServer()
@@ -220,11 +222,11 @@ function waitForMessageSend() {
     document.querySelector('#send-message').addEventListener('click', event => {
         let message = new TextEncoder("utf-8").encode('Hello from Signal!');//document.querySelector('#send-plaintext').value;
         let messageTo = myContacts[parseInt(document.querySelector('#message-to-field').value)];
-        if(message && messageTo) {
+        //if(message && messageTo) {
             sendMessageToServer(message, messageTo)
-        } else {
-            console.log('Invalid message object. Please check the fields');
-        }
+        //} else {
+          //  console.log('Invalid message object. Please check the fields');
+        //}
     });
 }
 
@@ -260,11 +262,11 @@ function waitForMessageReceive() {
         let messageFrom = myContacts[document.querySelector('#message-from-field').value];
         //console.log('messageFrom');
         //console.log(messageFrom);
-        if(messageFrom) {
+        //if(messageFrom) {
            getMessagesFromServer(messageFrom); 
-        } else {
-            console.log('Invalid message object. Please check the fields');
-        }
+        //} else {
+        //    console.log('Invalid message object. Please check the fields');
+        //}
     });
 }
 
@@ -274,8 +276,8 @@ function getMessagesFromServer(messageFrom) {
     let requestObject = {
         messageTo: myIdentifiers,
         messageFrom: {
-            registrationId: messageFrom.preKeyObject.registrationId,
-            deviceId: messageFrom.deviceId
+            registrationId: 960,//messageFrom.preKeyObject.registrationId,
+            deviceId: 98724//messageFrom.deviceId
         }
     };
 
