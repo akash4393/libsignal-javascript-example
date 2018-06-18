@@ -51,11 +51,11 @@ let listHTMLOfMyContacts = document.querySelector('#list-of-contacts');
 generateResgistrationId();
 
 function generateResgistrationId() {
-    registrationId = KeyHelper.generateRegistrationId();
-    
+    registrationId = 11299//KeyHelper.generateRegistrationId();
     myIdentifiers['registrationId'] = registrationId;
     myIdentifiers['deviceId'] = deviceId;
-
+    waitForMessageSend();
+    waitForMessageReceive();
     //console.log('registrationId');
     //console.log(registrationId);
     store.put('registrationId', registrationId);
@@ -208,8 +208,8 @@ function setupSession(processPreKeyObject, incomingDeviceId) {
             let listInnerString = 'Unique ID: ' + processPreKeyObject.registrationId + incomingDeviceId + ' Device ID: ' + incomingDeviceId + ' Registration ID: ' + processPreKeyObject.registrationId;
             newContactItem.appendChild(document.createTextNode(listInnerString));
             listHTMLOfMyContacts.appendChild(newContactItem);
-            waitForMessageSend();
-            waitForMessageReceive();
+            //waitForMessageSend();
+            //waitForMessageReceive();
         }).catch(err => {
             console.log('Failed!');
             throw err;
