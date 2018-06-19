@@ -151,7 +151,7 @@ function registerWithServer() {
 }
 
 function sendKeysToServer() {
-    let url = 'http://localhost:3000/send';
+    let url = serverBaseUrl + '/send';
     let requestObject = {
         type: 'init',
         deviceId: deviceId,
@@ -185,7 +185,7 @@ function waitForRequestKeys() {
             registrationId: parseInt(document.querySelector('#request-keys-registration-id').value),
             deviceId: parseInt(document.querySelector('#request-keys-device-id').value)
         };
-        let url = 'http://localhost:3000/get';
+        let url = serverBaseUrl + '/get';
         window.sendRequest(url, requestObject).then(obj => {
             processReceivedKeys(obj);
         })
@@ -275,7 +275,7 @@ function waitForMessageSend() {
 }
 
 function sendMessageToServer(message, messageToObject) {
-    let url = 'http://localhost:3000/send/message';
+    let url = serverBaseUrl + '/send/message';
 
     let requestObject = {
         messageTo: {
@@ -325,7 +325,7 @@ function waitForMessageReceive() {
 }
 
 function getMessagesFromServer(messageFrom) {
-    let url = 'http://localhost:3000/get/message';
+    let url = serverBaseUrl + '/get/message';
     let messageFromUniqueId;
 
     if(messageFrom) {
