@@ -207,7 +207,7 @@ function processReceivedKeys(resJson) {
         document.querySelector('#receive-prekey-key').value = resJson.preKey.key;
 
         requestKeysErrorElement.innerHTML = '';
-        requestKeysSuccessElement.innerHTML = 'Keys for ' + resJson.deviceId + ' retrieved successfully.'
+        requestKeysSuccessElement.innerHTML = 'Keys for ' + resJson.registrationId + resJson.deviceId + ' retrieved successfully.'
     }
 }
 
