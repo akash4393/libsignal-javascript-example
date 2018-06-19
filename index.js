@@ -1,17 +1,23 @@
 'use strict';
-//console.log(window.libsignal);
+
+/*
+@author Akash Singh
+@email contact@akashsingh.io
+@web akashsingh.io
+*/
 
 const ls = window.libsignal;
 const store = new window.SignalProtocolStore();
 
 const KeyHelper = ls.KeyHelper;
 const numberOfPreKeys = 1;
-const deviceId = 28724;
+const serverBaseUrl = 'http://localhost:3000';
 
 
 
 let idKeyPair = {};
 let registrationId;
+let deviceId;
 let preKeyObjects = [];
 let signedPreKeyObject = {};
 
@@ -46,27 +52,51 @@ myContacts = {
 let myContacts = {};
 
 // List element to display saved contacts
-let listHTMLOfMyContacts = document.querySelector('#list-of-contacts');
+let listHTMLOfMyContacts, initErrorElement, initSuccessElement, sendErrorElement, sendSuccessElement, 
+    requestKeysErrorElement, requestKeysSuccessElement, processKeysErrorElement, processKeysSuccessElement,
+    messagingErrorElement, messagingSuccessElement;
 
-generateResgistrationId();
+document.addEventListener('DOMContentLoaded', e => {
+    // Initializing HTML element variables
+    listHTMLOfMyContacts = document.querySelector('#list-of-contacts');
+    initErrorElement = document.querySelector('#error-init-container');
+    initSuccessElement = document.querySelector('#success-init-container');
+    sendErrorElement = document.querySelector('#error-send-container');
+    sendSuccessElement = document.querySelector('#success-send-container');
+    requestKeysErrorElement = document.querySelector('#error-request-keys-form');
+    requestKeysSuccessElement = document.querySelector('#success-request-keys-form');
+    processKeysErrorElement = document.querySelector('#error-process-keys-form');
+    processKeysSuccessElement = document.querySelector('#success-process-keys-form');
+    messagingErrorElement = document.querySelector('#error-messaging-form');
+    messagingSuccessElement = document.querySelector('#success-messaging-form');
 
-function generateResgistrationId() {
-    registrationId = 11299//KeyHelper.generateRegistrationId();
+    document.querySelector('#init-my-identity').addEventListener('click', e => {
+        let myDeviceId = parseInt(document.querySelector('#init-device-id').value);
+        if(myDeviceId === NaN) {
+            console.log('Please enter a valid numeric device ID');
+            initErrorElement.innerHTML = 'Please enter a valid numeric device ID';
+        } else {
+            initErrorElement.innerHTML = '';
+            deviceId = myDeviceId;
+            generateResgistrationId(myDeviceId);
+        }
+    });
+});
+
+function generateResgistrationId(myDeviceId) {
+    registrationId = KeyHelper.generateRegistrationId();
     myIdentifiers['registrationId'] = registrationId;
-    myIdentifiers['deviceId'] = deviceId;
+    myIdentifiers['deviceId'] = myDeviceId;
+    store.put('registrationId', registrationId);
+    document.querySelector('#init-registration-id').value = registrationId;
     waitForMessageSend();
     waitForMessageReceive();
-    //console.log('registrationId');
-    //console.log(registrationId);
-    store.put('registrationId', registrationId);
     generateIdKey();
 }
 
 function generateIdKey() {
     KeyHelper.generateIdentityKeyPair().then(identityKeyPair => {
         idKeyPair = identityKeyPair;
-        //console.log('idKeyPair');
-        //console.log(idKeyPair);
         store.put('identityKey', idKeyPair);
         generatePreKeys()
     });
@@ -87,8 +117,6 @@ function generatePreKeys() {
             preKeyObjects.push(preKeyObject);
             store.storePreKey(preKeyObject.keyId, preKeyObject.keyPair);
         });
-        //console.log('preKeyObjects');
-        //console.log(preKeyObjects);
         generateSignedPreKey();
     });
 }
@@ -101,13 +129,12 @@ function generateSignedPreKey() {
             signature: signedPreKey.signature
         }
         store.storeSignedPreKey(signedPreKey.keyId, signedPreKeyObject.keyPair);
-        //console.log('signedPreKeyObject');
-        //console.log(signedPreKeyObject);
         registerWithServer()
     });
 }
 
 function registerWithServer() {
+    initSuccessElement.innerHTML = 'Initialization Complete. Please send your initial packet to server.'
     document.querySelector('#registration-id').value = registrationId;
     document.querySelector('#identity-key').value = window.arrBuffToBase64(idKeyPair.pubKey);
     document.querySelector('#signed-prekey-id').value = signedPreKeyObject.keyId;
@@ -115,9 +142,12 @@ function registerWithServer() {
     document.querySelector('#signed-prekey-signature').value = window.arrBuffToBase64(signedPreKeyObject.signature);
     document.querySelector('#prekey-id').value = preKeyObjects[0].keyId;
     document.querySelector('#prekey-key').value = window.arrBuffToBase64(preKeyObjects[0].keyPair.pubKey);
-    sendKeysToServer();
-    waitForKeys();
-    waitForRequestKeys();
+    
+    document.querySelector('#send-keys').addEventListener('click', e => {
+        sendKeysToServer(); // Send inital key packet
+        waitForKeys(); // Enable manually adding recipient's details to create a session
+        waitForRequestKeys(); // Enable retrieve key functionality from server
+    });
 }
 
 function sendKeysToServer() {
@@ -138,10 +168,14 @@ function sendKeysToServer() {
         }
     }
 
-    document.querySelector('#send-keys').addEventListener('click', event => {
-        window.sendRequest(url, requestObject).then(obj => {
-            //console.log(obj);
-        })
+    window.sendRequest(url, requestObject).then(res => {
+        if(res.err) {
+            sendSuccessElement.innerHTML = '';
+            sendErrorElement.innerHTML = (typeof res.err === 'string') ? res.err : res.err.toString();
+        } else {
+            sendErrorElement.innerHTML = '';
+            sendSuccessElement.innerHTML = 'Initial packet delivered successfully.';
+        }
     });
 }
 
@@ -159,9 +193,9 @@ function waitForRequestKeys() {
 }
 
 function processReceivedKeys(resJson) {
-    //console.log(resJson);
     if(resJson.err) {
-        document.querySelector('#log-dump').innerHTML = resJson.err;
+        requestKeysSuccessElement.innerHTML = '';
+        requestKeysErrorElement.innerHTML = (typeof resJson.err === 'string') ? resJson.err : resJson.err.toString();
     } else {
         document.querySelector('#receive-registration-id').value = resJson.registrationId;
         document.querySelector('#receive-device-id').value = resJson.deviceId;
@@ -171,6 +205,9 @@ function processReceivedKeys(resJson) {
         document.querySelector('#receive-signed-prekey-signature').value = resJson.signedPreKey.signature;
         document.querySelector('#receive-prekey-id').value = resJson.preKey.id;
         document.querySelector('#receive-prekey-key').value = resJson.preKey.key;
+
+        requestKeysErrorElement.innerHTML = '';
+        requestKeysSuccessElement.innerHTML = 'Keys for ' + resJson.deviceId + ' retrieved successfully.'
     }
 }
 
@@ -189,44 +226,51 @@ function waitForKeys() {
                 publicKey: window.base64ToArrBuff(document.querySelector('#receive-prekey-key').value)
             }
         };
-        let incomingDeviceId = document.querySelector('#receive-device-id').value;
-        setupSession(processPreKeyObject, incomingDeviceId);
+        let incomingDeviceIdStr = document.querySelector('#receive-device-id').value;
+        setupSession(processPreKeyObject, incomingDeviceIdStr);
     })
 }
 
-function setupSession(processPreKeyObject, incomingDeviceId) {
-    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.registrationId, incomingDeviceId);
+function setupSession(processPreKeyObject, incomingDeviceIdStr) {
+    let recipientAddress = new ls.SignalProtocolAddress(processPreKeyObject.registrationId, incomingDeviceIdStr);
     let sessionBuilder = new ls.SessionBuilder(store, recipientAddress);
     sessionBuilder.processPreKey(processPreKeyObject)
         .then(resp => {
-            //console.log(resp);
             console.log('Success! Session Established!');
             // Store incoming key packet to known contacts
-            myContacts[processPreKeyObject.registrationId + incomingDeviceId] = {
-                deviceId: parseInt(incomingDeviceId),
+            myContacts[processPreKeyObject.registrationId + incomingDeviceIdStr] = {
+                deviceId: parseInt(incomingDeviceIdStr),
                 preKeyObject: processPreKeyObject
             };
             let newContactItem = document.createElement('li');
-            let listInnerString = 'Unique ID: ' + processPreKeyObject.registrationId + incomingDeviceId + ' Device ID: ' + incomingDeviceId + ' Registration ID: ' + processPreKeyObject.registrationId;
+
+            let listInnerString = 'Unique ID: ' + processPreKeyObject.registrationId + incomingDeviceIdStr
+                + ' Device ID: ' + incomingDeviceIdStr + ' Registration ID: ' + processPreKeyObject.registrationId;
+
             newContactItem.appendChild(document.createTextNode(listInnerString));
             listHTMLOfMyContacts.appendChild(newContactItem);
-            //waitForMessageSend();
-            //waitForMessageReceive();
+
+            processKeysErrorElement.innerHTML = '';
+            processKeysSuccessElement.innerHTML = 'Contact added successfully.'
+
         }).catch(err => {
             console.log('Failed!');
-            throw err;
+            processKeysErrorElement.innerHTML = (typeof err === 'string') ? err : err.toString();
         });
 }
 
 function waitForMessageSend() {
     document.querySelector('#send-message').addEventListener('click', event => {
-        let message = new TextEncoder("utf-8").encode('Hello from Signal!');//document.querySelector('#send-plaintext').value;
+        let rawMessageStr = document.querySelector('#send-plaintext').value;
+        let message = new TextEncoder("utf-8").encode(rawMessageStr);
         let messageTo = myContacts[parseInt(document.querySelector('#message-to-field').value)];
-        //if(message && messageTo) {
+        if(message && messageTo) {
             sendMessageToServer(message, messageTo)
-        //} else {
-          //  console.log('Invalid message object. Please check the fields');
-        //}
+        } else {
+          console.log('Invalid To or Message entry. Please check the fields');
+          messagingSuccessElement.innerHTML = '';
+          messagingErrorElement.innerHTML = 'Invalid To or Message entry. Please check the fields';
+        }
     });
 }
 
@@ -244,49 +288,62 @@ function sendMessageToServer(message, messageToObject) {
         },
         ciphertextMessage: 'Invalid ciphertext',
     };
-    let signalMessageToAddress = new ls.SignalProtocolAddress(requestObject.messageTo.registrationId, requestObject.messageTo.deviceId)
-    //console.log(signalMessageToAddress);
+
+    let signalMessageToAddress = new ls.SignalProtocolAddress(requestObject.messageTo.registrationId, 
+        requestObject.messageTo.deviceId);
     let sessionCipher = new ls.SessionCipher(store, signalMessageToAddress);
+
     sessionCipher.encrypt(message).then(ciphertext => {
-        //console.log(ciphertext);
         requestObject.ciphertextMessage = ciphertext;
         window.sendRequest(url, requestObject).then(res => {
-            console.log('Message succesfully sent to server');
-            //console.log(res);
+            if(res.err) {
+                console.log(res.err);
+                messagingSuccessElement.innerHTML = '';
+                messagingErrorElement.innerHTML = (typeof res.err === 'string') ? res.err : res.err.toString();    
+            } else {
+                console.log('Message succesfully sent to server');
+                messagingErrorElement.innerHTML = '';
+                messagingSuccessElement.innerHTML = 'Message succesfully sent to server.';
+            }
         });
+    }).catch(err => {
+        messagingSuccessElement.innerHTML = '';
+        messagingErrorElement.innerHTML = (typeof err === 'string') ? err : err.toString();
     });
 }
 
 function waitForMessageReceive() {
     document.querySelector('#receive-message').addEventListener('click', event => {
         let messageFrom = myContacts[document.querySelector('#message-from-field').value];
-        //console.log('messageFrom');
-        //console.log(messageFrom);
-        //if(messageFrom) {
-           getMessagesFromServer(messageFrom); 
-        //} else {
-        //    console.log('Invalid message object. Please check the fields');
-        //}
+
+        if(messageFrom) {
+            getMessagesFromServer(messageFrom);
+        } else {
+            getMessagesFromServer();
+        }
     });
 }
 
 function getMessagesFromServer(messageFrom) {
     let url = 'http://localhost:3000/get/message';
+    let messageFromUniqueId;
+
+    if(messageFrom) {
+        messageFromUniqueId = messageFrom.preKeyObject.registrationId.toString() + messageFrom.deviceId.toString(); 
+    } else {
+        messageFromUniqueId = document.querySelector('#message-from-field').value;
+    }
 
     let requestObject = {
         messageTo: myIdentifiers,
-        messageFrom: {
-            registrationId: 960,//messageFrom.preKeyObject.registrationId,
-            deviceId: 98724//messageFrom.deviceId
-        }
+        messageFromUniqueId: messageFromUniqueId
     };
 
     window.sendRequest(url, requestObject).then(res => {
-        //console.log('Received response:');
-        //console.log(res);
         if(res.err) {
-            document.querySelector('#log-dump').innerHTML = res.err;
-            document.querySelector('#receive-plaintext').value = res.err;
+            console.log(res.err);
+            messagingSuccessElement.innerHTML = '';
+            messagingErrorElement.innerHTML = (typeof res.err === 'string') ? res.err : res.err.toString();
         } else {
             processIncomingMessage(res);
         }
@@ -294,11 +351,17 @@ function getMessagesFromServer(messageFrom) {
 }
 
 function processIncomingMessage(incomingMessageObj) {
-    let signalMessageFromAddress = new ls.SignalProtocolAddress(incomingMessageObj.messageFrom.registrationId, incomingMessageObj.messageFrom.deviceId);
+    let signalMessageFromAddress = new ls.SignalProtocolAddress(incomingMessageObj.messageFrom.registrationId, 
+        incomingMessageObj.messageFrom.deviceId);
     let sessionCipher = new ls.SessionCipher(store, signalMessageFromAddress); 
-    //incomingMessage.body = window.lsUtil.toArrayBuffer(incomingMessage.body)
-    //console.log(incomingMessage);
     sessionCipher.decryptPreKeyWhisperMessage(incomingMessageObj.ciphertextMessage.body, 'binary').then(plaintext => {
-        console.log(plaintext);
+        let decryptedMessage = window.util.toString(plaintext);
+        console.log(decryptedMessage);
+        document.querySelector('#receive-plaintext').value = decryptedMessage;
+        messagingErrorElement.innerHTML = '';
+        messagingSuccessElement.innerHTML = 'Message decrypted succesfully.';
+    }).catch(err => {
+        messagingSuccessElement.innerHTML = '';
+        messagingErrorElement.innerHTML = (typeof err === 'string') ? err : err.toString();
     });
 }

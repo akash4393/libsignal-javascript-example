@@ -1,13 +1,35 @@
 <!DOCTYPE html>
+
+<!--
+@author Akash Singh
+@email contact@akashsingh.io
+@web akashsingh.io
+-->
+
 <html>
 <head>
 	<title>Signal Test - Browser</title>
 </head>
 <body>
 	<div class="container">
-		<div id="log-dump" style="color: red;"></div>
+		<div class="init-container">
+			<h1>Init</h1>
+			<div id="error-init-container" class="error-message" style="color: red;"></div>
+			<div id="success-init-container" class="success-message" style="color: green;"></div>
+			<label>
+				<span>Enter your device ID</span>
+				<input type="text" name="init-device-id" id="init-device-id">
+			</label>
+			<button style="margin-top: 20px;" id="init-my-identity">Initialize</button>
+			<label>
+				<span>Your registration ID (will be populated on init)</span>
+				<input type="text" name="init-registration-id" id="init-registration-id">
+			</label>
+		</div>
 		<div class="send-container">
 			<h1>Send</h1>
+			<div id="error-send-container" class="error-message" style="color: red;"></div>
+			<div id="success-send-container" class="success-message" style="color: green;"></div>
 			<div class="registration-id">
 				<h2>Registration ID</h2>
 				<label>
@@ -54,6 +76,8 @@
 		<hr>
 		<div class="receive-container">
 			<div class="request-keys-form">
+				<div id="error-request-keys-form" class="error-message" style="color: red;"></div>
+				<div id="success-request-keys-form" class="success-message" style="color: green;"></div>
 				<label>
 					<span>Registration Id</span>
 					<input type="text" name="request-keys-registration-id" id="request-keys-registration-id">
@@ -66,6 +90,8 @@
 			</div>
 			<hr>
 			<h1>Receive</h1>
+			<div id="error-process-keys-form" class="error-message" style="color: red;"></div>
+			<div id="success-process-keys-form" class="success-message" style="color: green;"></div>
 			<div class="registration-id">
 				<h2>Registration ID</h2>
 				<label>
@@ -119,6 +145,8 @@
 		<hr>
 		<div class="message-container" style="display: inline-block;">
 			<h1>Messaging</h1>
+			<div id="error-messaging-form" class="error-message" style="color: red;"></div>
+			<div id="success-messaging-form" class="success-message" style="color: green;"></div>
 			<div class='contacts'>
 				<h3>Saved Contacts</h3>
 				<ul id="list-of-contacts">
@@ -131,7 +159,7 @@
 					<input type="text" name="message-to-field" id="message-to-field">
 				</label>
 				<label>
-					<span>Send Message</span>
+					<span>Message</span>
 					<input type="text" name="send-plaintext" id="send-plaintext">
 				</label>
 				<button style="margin-top: 20px;" id="send-message">Send</button>
@@ -143,7 +171,7 @@
 				</label>
 				<button style="margin-top: 20px;" id="receive-message">Get Message</button>
 				<label>
-					<span>Receive Message</span>
+					<span>Message</span>
 					<input type="text" name="receive-plaintext" id="receive-plaintext">
 				</label>
 			</div>

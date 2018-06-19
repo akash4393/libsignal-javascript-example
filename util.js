@@ -1,3 +1,11 @@
+'user strict'
+
+/*
+@author Akash Singh
+@email contact@akashsingh.io
+@web akashsingh.io
+*/
+
 function arrayBufferToBase64(buffer) {
     var binary = '';
     var bytes = new Uint8Array(buffer);
