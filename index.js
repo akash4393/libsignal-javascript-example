@@ -10,7 +10,7 @@ const ls = window.libsignal;
 const store = new window.SignalProtocolStore();
 
 const KeyHelper = ls.KeyHelper;
-const numberOfPreKeys = 1;
+const numberOfPreKeys = 2;
 const serverBaseUrl = 'http://localhost:3000';
 
 
@@ -19,6 +19,7 @@ let idKeyPair = {};
 let registrationId;
 let deviceId;
 let preKeyObjects = [];
+let preKeyObjectsToSend = [];
 let signedPreKeyObject = {};
 
 /* Object that stores my details
@@ -116,6 +117,12 @@ function generatePreKeys() {
             };
             preKeyObjects.push(preKeyObject);
             store.storePreKey(preKeyObject.keyId, preKeyObject.keyPair);
+            console.log(preKeyObject);
+            let preKeyObjectToSend = {
+                id: preKeyObject.keyId,
+                key: window.arrBuffToBase64(preKeyObject.keyPair.pubKey)
+            };
+            preKeyObjectsToSend.push(preKeyObjectToSend); 
         });
         generateSignedPreKey();
     });
@@ -162,10 +169,11 @@ function sendKeysToServer() {
             key: window.arrBuffToBase64(signedPreKeyObject.keyPair.pubKey),
             signature: window.arrBuffToBase64(signedPreKeyObject.signature)
         },
-        preKey: {
+        /*preKey: {
             id: preKeyObjects[0].keyId,
             key: window.arrBuffToBase64(preKeyObjects[0].keyPair.pubKey)
-        }
+        }*/
+        preKeys: preKeyObjectsToSend
     }
 
     window.sendRequest(url, requestObject).then(res => {
