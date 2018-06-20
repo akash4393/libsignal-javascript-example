@@ -11,7 +11,7 @@ const store = new window.SignalProtocolStore();
 
 const KeyHelper = ls.KeyHelper;
 const numberOfPreKeys = 2;
-const serverBaseUrl = 'http://localhost:3000';
+const serverBaseUrl = window.location.href;
 
 
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
     document.querySelector('#init-my-identity').addEventListener('click', e => {
         let myDeviceId = parseInt(document.querySelector('#init-device-id').value);
-        if(myDeviceId === NaN) {
+        if(isNaN(myDeviceId)) {
             console.log('Please enter a valid numeric device ID');
             initErrorElement.innerHTML = 'Please enter a valid numeric device ID';
         } else {
@@ -158,7 +158,7 @@ function registerWithServer() {
 }
 
 function sendKeysToServer() {
-    let url = serverBaseUrl + '/send';
+    let url = serverBaseUrl + 'send';
     let requestObject = {
         type: 'init',
         deviceId: deviceId,
@@ -193,7 +193,7 @@ function waitForRequestKeys() {
             registrationId: parseInt(document.querySelector('#request-keys-registration-id').value),
             deviceId: parseInt(document.querySelector('#request-keys-device-id').value)
         };
-        let url = serverBaseUrl + '/get';
+        let url = serverBaseUrl + 'get';
         window.sendRequest(url, requestObject).then(obj => {
             processReceivedKeys(obj);
         })
@@ -278,7 +278,7 @@ function waitForMessageSend() {
 }
 
 function sendMessageToServer(message, messageToObject) {
-    let url = serverBaseUrl + '/send/message';
+    let url = serverBaseUrl + 'send/message';
 
     let requestObject = {
         messageTo: {
@@ -328,7 +328,7 @@ function waitForMessageReceive() {
 }
 
 function getMessagesFromServer(messageFrom) {
-    let url = serverBaseUrl + '/get/message';
+    let url = serverBaseUrl + 'get/message';
     let messageFromUniqueId;
 
     if(messageFrom) {
