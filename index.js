@@ -250,13 +250,8 @@ function setupSession(processPreKeyObject, incomingDeviceIdStr) {
                 deviceId: parseInt(incomingDeviceIdStr),
                 preKeyObject: processPreKeyObject
             };
-            let newContactItem = document.createElement('li');
 
-            let listInnerString = 'Unique ID: ' + processPreKeyObject.registrationId + incomingDeviceIdStr
-                + ' Device ID: ' + incomingDeviceIdStr + ' Registration ID: ' + processPreKeyObject.registrationId;
-
-            newContactItem.appendChild(document.createTextNode(listInnerString));
-            listHTMLOfMyContacts.appendChild(newContactItem);
+            saveContact(processPreKeyObject.registrationId, incomingDeviceIdStr);
 
             processKeysErrorElement.innerHTML = '';
             processKeysSuccessElement.innerHTML = 'Contact added successfully.'
@@ -359,6 +354,7 @@ function getMessagesFromServer(messageFrom) {
 }
 
 function processIncomingMessage(incomingMessageObj) {
+    console.log(incomingMessageObj);
     let signalMessageFromAddress = new ls.SignalProtocolAddress(incomingMessageObj.messageFrom.registrationId, 
         incomingMessageObj.messageFrom.deviceId);
     let sessionCipher = new ls.SessionCipher(store, signalMessageFromAddress); 
@@ -366,10 +362,22 @@ function processIncomingMessage(incomingMessageObj) {
         let decryptedMessage = window.util.toString(plaintext);
         console.log(decryptedMessage);
         document.querySelector('#receive-plaintext').value = decryptedMessage;
+
+        saveContact(incomingMessageObj.messageFrom.registrationId.toString(), incomingMessageObj.messageFrom.registrationId.toString());
+
         messagingErrorElement.innerHTML = '';
         messagingSuccessElement.innerHTML = 'Message decrypted succesfully.';
     }).catch(err => {
         messagingSuccessElement.innerHTML = '';
         messagingErrorElement.innerHTML = (typeof err === 'string') ? err : err.toString();
     });
+}
+
+function saveContact(contactRegId, contactDevId) {
+    let newContactItem = document.createElement('li');
+    let listInnerString = 'Unique ID: ' + contactRegId + contactDevId + ' Registration ID: ' + contactRegId 
+        + ' Device ID: ' + contactDevId;
+
+    newContactItem.appendChild(document.createTextNode(listInnerString));
+    listHTMLOfMyContacts.appendChild(newContactItem);
 }
