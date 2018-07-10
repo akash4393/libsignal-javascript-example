@@ -363,7 +363,7 @@ function processIncomingMessage(incomingMessageObj) {
         console.log(decryptedMessage);
         document.querySelector('#receive-plaintext').value = decryptedMessage;
 
-        saveContact(incomingMessageObj.messageFrom.registrationId.toString(), incomingMessageObj.messageFrom.registrationId.toString());
+        saveContact(incomingMessageObj.messageFrom.registrationId.toString(), incomingMessageObj.messageFrom.deviceId.toString());
 
         messagingErrorElement.innerHTML = '';
         messagingSuccessElement.innerHTML = 'Message decrypted succesfully.';
