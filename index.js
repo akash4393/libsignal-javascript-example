@@ -117,7 +117,6 @@ function generatePreKeys() {
             };
             preKeyObjects.push(preKeyObject);
             store.storePreKey(preKeyObject.keyId, preKeyObject.keyPair);
-            console.log(preKeyObject);
             let preKeyObjectToSend = {
                 id: preKeyObject.keyId,
                 key: window.arrBuffToBase64(preKeyObject.keyPair.pubKey)
