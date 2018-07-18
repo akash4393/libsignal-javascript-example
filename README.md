@@ -2,6 +2,8 @@
 
 To build an open source signal protocol example application for developing a better understanding of the library and signal protocol itself.
 
+Currently hosted at [AWS](http://ec2-54-219-170-163.us-west-1.compute.amazonaws.com:3000/)
+
 ## Getting Started
 
 ### How to Run
@@ -9,7 +11,7 @@ To build an open source signal protocol example application for developing a bet
 * Clone repository
 * Install dependencies
 	```
-	> npm install
+	npm install
 	```
 * Get libsignal-protocol-javascript from github page
 * Extract contents of zip in root (./) folder
@@ -17,22 +19,22 @@ To build an open source signal protocol example application for developing a bet
 * Navigate to root folder
 * Install emscripten
 	```
-	> git clone https://github.com/juj/emsdk.git
-	> cd emsdk
-	> ./emsdk install latest
-	> ./emsdk activate latest
-	> source ./emsdk_env.sh
+	git clone https://github.com/juj/emsdk.git
+	cd emsdk
+	./emsdk install latest
+	./emsdk activate latest
+	source ./emsdk_env.sh
 	```
 * Navigate to folder cd ./libsignal-protocol-javascript-master
 * Run the following commands
 	```
-	> npm install -g grunt-cli
-	> npm install
-	> grunt compile
+	npm install -g grunt-cli
+	npm install
+	grunt compile
 	```
 * Run app
 	```
-	> node server.js
+	node server.js
 	```
 
 ### How to Use
