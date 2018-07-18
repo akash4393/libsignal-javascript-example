@@ -2,7 +2,7 @@
 
 To build an open source signal protocol example application for developing a better understanding of the library and signal protocol itself.
 
-Currently hosted at [AWS](http://ec2-54-219-170-163.us-west-1.compute.amazonaws.com:3000/)
+Currently hosted on [AWS](http://ec2-54-219-170-163.us-west-1.compute.amazonaws.com:3000/)
 
 ## Getting Started
 
