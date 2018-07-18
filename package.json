@@ -1,0 +1,29 @@
+{
+  "name": "signal-example",
+  "version": "1.0.0",
+  "description": "libsignal-protocol-javascript implementation with node server for server-client example",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akash4393/libsignal-javascript-example.git"
+  },
+  "keywords": [
+    "libsignal",
+    "libsignal-protocol-javascript",
+    "example"
+  ],
+  "author": "Akash Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akash4393/libsignal-javascript-example/issues"
+  },
+  "homepage": "https://github.com/akash4393/libsignal-javascript-example#readme"
+}
